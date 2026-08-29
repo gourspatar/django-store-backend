@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import get_object_or_404
 
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
@@ -56,13 +57,13 @@ class ProductListCreateView(APIView):
 class CategoryDetailView(APIView):
 
     def get(self, request, pk):
-        category = Category.objects.get(pk=pk)
+        category = get_object_or_404(Category, pk=pk)
         serializer = CategorySerializer(category)
 
         return Response(serializer.data)
 
     def put(self, request, pk):
-        category = Category.objects.get(pk=pk)
+        category = get_object_or_404(Category, pk=pk)
         serializer = CategorySerializer(
             category,
             data=request.data
@@ -78,7 +79,7 @@ class CategoryDetailView(APIView):
         )
 
     def delete(self, request, pk):
-        category = Category.objects.get(pk=pk)
+        category = get_object_or_404(Category, pk=pk)
         category.delete()
 
         return Response(
