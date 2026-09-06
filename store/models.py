@@ -43,6 +43,14 @@ class CartItem(models.Model):
 
     quantity = models.PositiveIntegerField(default=1)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["cart", "product"],
+                name="unique_product_per_cart"
+            )
+        ]
+
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
 
