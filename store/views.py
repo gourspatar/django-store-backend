@@ -4,7 +4,12 @@ from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
 
 from .models import Category, Product
-from .serializers import CategorySerializer, ProductSerializer
+from .serializers import (
+    CategorySerializer,
+    ProductSerializer,
+    CartItemSerializer,
+)
+from .models import Category, Product, Cart, CartItem
 
 
 class CategoryListCreateView(APIView):
@@ -118,3 +123,71 @@ class CategoryDetailView(APIView):
         return Response(
             status=status.HTTP_204_NO_CONTENT
         )
+
+
+class CartItemCreateView(APIView):
+
+    def post(self, request):
+        product_id = request.data.get("product")
+        quantity = request.data.get("quantity", 1)
+
+        product = get_object_or_404(Product, pk=product_id)
+
+        cart, created = Cart.objects.get_or_create(
+            user=request.user
+        )
+
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            product=product,
+            defaults={"quantity": quantity}
+        )
+
+        if not created:
+            cart_item.quantity += quantity
+            cart_item.save()
+
+        serializer = CartItemSerializer(cart_item)
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED
+        )
+
+class CartItemUpdateView(APIView):
+
+    def patch(self, request, pk):
+        cart_item = get_object_or_404(
+            CartItem,
+            pk=pk,
+            cart__user=request.user
+        )
+
+        quantity = request.data.get("quantity")
+
+        if quantity is None:
+            return Response(
+                {"error": "Quantity is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            quantity = int(quantity)
+        except (TypeError, ValueError):
+            return Response(
+                {"error": "Quantity must be a positive integer."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if quantity <= 0:
+            return Response(
+                {"error": "Quantity must be greater than 0."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        cart_item.quantity = quantity
+        cart_item.save()
+
+        serializer = CartItemSerializer(cart_item)
+
+        return Response(serializer.data)
