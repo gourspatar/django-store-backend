@@ -15,10 +15,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.http import JsonResponse
 from django.urls import include, path
 
 
+def api_root(request):
+    """Provide a useful response when the development server root is opened."""
+    return JsonResponse({
+        "message": "Django Store API",
+        "endpoints": {
+            "admin": "/admin/",
+            "categories": "/api/categories/",
+            "products": "/api/products/",
+            "cart": "/api/cart/",
+        },
+    })
+
+
 urlpatterns = [
+    path("", api_root, name="api-root"),
     path("admin/", admin.site.urls),
     path("api/", include("store.urls")),
 ]

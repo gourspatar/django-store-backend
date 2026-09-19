@@ -191,3 +191,39 @@ class CartItemUpdateView(APIView):
         serializer = CartItemSerializer(cart_item)
 
         return Response(serializer.data)
+
+    def delete(self, request, pk):
+        cart_item = get_object_or_404(
+            CartItem,
+            pk=pk,
+            cart__user=request.user
+        )
+
+        cart_item.delete()
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
+class CartView(APIView):
+
+    def get(self, request):
+        cart, created = Cart.objects.get_or_create(
+            user=request.user
+        )
+
+        cart_items = cart.items.select_related("product")
+
+        serializer = CartItemSerializer(
+            cart_items,
+            many=True
+        )
+
+        total = sum(
+            item.product.price * item.quantity
+            for item in cart_items
+        )
+
+        return Response({
+            "items": serializer.data,
+            "total": total
+        })

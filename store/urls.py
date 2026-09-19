@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CategoryListCreateView, CategoryDetailView, ProductListCreateView, ProductDetailView , CartItemCreateView , CartItemUpdateView
+from .views import CategoryListCreateView, CategoryDetailView, ProductListCreateView, ProductDetailView , CartItemCreateView , CartItemUpdateView , CartView
 
 urlpatterns = [
     path(
@@ -27,4 +27,8 @@ urlpatterns = [
     "cart/items/<int:pk>/",
     CartItemUpdateView.as_view()
 ),
+    path(
+        "cart/",
+        CartView.as_view()
+    )
 ]
