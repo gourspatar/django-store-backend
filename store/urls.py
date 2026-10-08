@@ -1,34 +1,33 @@
 from django.urls import path
-from .views import CategoryListCreateView, CategoryDetailView, ProductListCreateView, ProductDetailView , CartItemCreateView , CartItemUpdateView , CartView
+
+from .views import (
+    CategoryListCreateView,
+    CategoryDetailView,
+    ProductListCreateView,
+    ProductDetailView,
+    CartView,
+    CartItemCreateView,
+    CartItemUpdateView,
+    CheckoutView,
+    OrderListView,
+    OrderDetailView,
+    OrderCancelView,
+)
 
 urlpatterns = [
-    path(
-        "categories/",
-        CategoryListCreateView.as_view()
-    ),
-    path(
-        "categories/<int:pk>/",
-        CategoryDetailView.as_view()
-    ),
-    path(
-        "products/",
-        ProductListCreateView.as_view()
-    ),
-    path(
-    "products/<int:pk>/",
-    ProductDetailView.as_view()
-    ),
-    path(
-        "cart/items/",
-        CartItemCreateView.as_view()
-    ),
-
-    path(
-    "cart/items/<int:pk>/",
-    CartItemUpdateView.as_view()
-),
-    path(
-        "cart/",
-        CartView.as_view()
-    )
+    # Categories
+    path("categories/", CategoryListCreateView.as_view(), name="category-list"),
+    path("categories/<int:pk>/", CategoryDetailView.as_view(), name="category-detail"),
+    # Products
+    path("products/", ProductListCreateView.as_view(), name="product-list"),
+    path("products/<int:pk>/", ProductDetailView.as_view(), name="product-detail"),
+    # Cart
+    path("cart/", CartView.as_view(), name="cart"),
+    path("cart/items/", CartItemCreateView.as_view(), name="cart-item-add"),
+    path("cart/items/<int:pk>/", CartItemUpdateView.as_view(), name="cart-item-update"),
+    # Checkout + Orders
+    path("checkout/", CheckoutView.as_view(), name="checkout"),
+    path("orders/", OrderListView.as_view(), name="order-list"),
+    path("orders/<int:pk>/", OrderDetailView.as_view(), name="order-detail"),
+    path("orders/<int:pk>/cancel/", OrderCancelView.as_view(), name="order-cancel"),
 ]
