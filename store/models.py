@@ -87,6 +87,11 @@ class Order(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # --- Stripe payment tracking ---
+    stripe_session_id = models.CharField(max_length=255, blank=True, default="")
+    stripe_payment_intent_id = models.CharField(max_length=255, blank=True, default="")
+    paid_at = models.DateTimeField(null=True, blank=True)
+
     def __str__(self):
         return f"Order #{self.id} - {self.user.username}"
 

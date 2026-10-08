@@ -44,7 +44,14 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ("status", "created_at")
     search_fields = ("user__username", "user__email")
     list_editable = ("status",)
-    readonly_fields = ("user", "total", "created_at")
+    readonly_fields = (
+        "user",
+        "total",
+        "created_at",
+        "paid_at",
+        "stripe_session_id",
+        "stripe_payment_intent_id",
+    )
     inlines = [OrderItemInline]
     actions = ["mark_paid", "mark_shipped", "mark_delivered", "mark_cancelled"]
 
